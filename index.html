@@ -30,7 +30,7 @@
             <input type="number" id="acompanantes" placeholder="¿Cuántos acompañantes?" min="0" required>
             <select id="asistencia" required>
                 <option value="" disabled selected>¿Asistirás?</option>
-                <option value="si">¡Sí! 🥳</option>
+                <option value="si">¡Sí!</option>
                 <option value="no">No 😔</option>
             </select>
             <button type="submit" id="btnEnviar">Enviar Confirmación</button>
@@ -40,12 +40,14 @@
     <iframe src="https://maps.app.goo.gl/HCwHLruu7rDx5YGHA" allowfullscreen="" loading="lazy"></iframe>
 
     <script type="module">
+        // IMPORTANTE: Importamos desde 'firebase-database'
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyC4uJlXvpXcv6mRhTVNjQgNhVrNJst8_QE",
             authDomain: "stringhinifest.firebaseapp.com",
+            databaseURL: "https://stringhinifest-default-rtdb.firebaseio.com", // Verifica esta URL en tu consola
             projectId: "stringhinifest",
             storageBucket: "stringhinifest.firebasestorage.app",
             messagingSenderId: "899568331837",
@@ -54,33 +56,35 @@
         };
 
         const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        const db = getDatabase(app);
 
-        // Referencia al formulario
         const form = document.getElementById('rsvpForm');
         const btn = document.getElementById('btnEnviar');
 
         form.addEventListener('submit', async (event) => {
-            // PRIMERA LÍNEA: Detener el reinicio
             event.preventDefault();
-            console.log("CLICK DETECTADO - No se debería reiniciar");
-
+            
             btn.disabled = true;
             btn.innerText = "Guardando...";
 
             try {
-                await addDoc(collection(db, "asistencias"), {
+                // Creamos una nueva referencia en la lista 'asistencias'
+                const listaAsistenciasRef = ref(db, 'asistencias');
+                const nuevaAsistenciaRef = push(listaAsistenciasRef);
+                
+                await set(nuevaAsistenciaRef, {
                     nombre: document.getElementById('nombre').value,
                     telefono: document.getElementById('telefono').value,
                     acompanantes: document.getElementById('acompanantes').value,
                     asistencia: document.getElementById('asistencia').value,
-                    fecha: new Date()
+                    fecha: new Date().toISOString()
                 });
+
                 alert("¡Registrado con éxito!");
                 form.reset();
             } catch (error) {
-                console.error("ERROR AL GUARDAR:", error);
-                alert("Error de Firebase: " + error.message);
+                console.error("ERROR:", error);
+                alert("Error: " + error.message);
             } finally {
                 btn.disabled = false;
                 btn.innerText = "Enviar Confirmación";
