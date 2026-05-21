@@ -7,12 +7,31 @@
     <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Roboto+Condensed:wght@300;400&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Roboto Condensed', sans-serif; background-color: #E6DCCF; background-image: url('https://www.transparenttextures.com/patterns/cardboard-flat.png'); color: #333; max-width: 600px; margin: 0 auto; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .header { text-align: center; margin-bottom: 30px; }
+        .header { text-align: center; margin-bottom: 20px; }
         h1.main-title { font-family: 'Patrick Hand', cursive; font-size: 3.5rem; margin: 0; text-transform: uppercase; }
         h2.year-title { font-family: 'Patrick Hand', cursive; font-size: 5.5rem; margin: -10px 0 0 0; }
+        
+        /* Contador */
+        .counter-box { font-family: 'Patrick Hand', cursive; font-size: 1.8rem; background-color: rgba(255,255,255,0.6); padding: 10px 20px; border-radius: 10px; border: 2px dashed #333; margin-bottom: 20px; text-align: center; }
+        .counter-box span { font-size: 2.2rem; font-weight: bold; color: #075e54; }
+
         #rsvp-form-container { background-color: rgba(255, 255, 255, 0.7); padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; box-sizing: border-box; }
-        input, select, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #999; box-sizing: border-box; font-size: 1rem; }
+        input, select, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #999; box-sizing: border-box; font-size: 1rem; font-family: 'Roboto Condensed', sans-serif; }
         button#btnEnviar { background-color: #333; color: white; border: none; cursor: pointer; font-size: 1.3rem; }
+        
+        /* Botones de Modales */
+        .extra-buttons { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 20px; width: 100%; }
+        button.btn-modal { background-color: transparent; border: 2px solid #333; color: #333; cursor: pointer; font-family: 'Patrick Hand', cursive; font-size: 1.2rem; padding: 10px 20px; border-radius: 8px; transition: 0.3s; width: auto; }
+        button.btn-modal:hover { background-color: #333; color: white; }
+        button.btn-icon { border-radius: 50%; width: 45px; height: 45px; padding: 0; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; }
+
+        /* Estilo de los Cuadros de Diálogo (Modales) */
+        dialog { background-color: #E6DCCF; background-image: url('https://www.transparenttextures.com/patterns/cardboard-flat.png'); border: 3px solid #333; border-radius: 15px; padding: 20px; max-width: 90%; width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); font-family: 'Roboto Condensed', sans-serif; }
+        dialog::backdrop { background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(3px); }
+        dialog h3 { font-family: 'Patrick Hand', cursive; font-size: 2rem; margin-top: 0; text-align: center; border-bottom: 2px dashed #333; padding-bottom: 10px; }
+        dialog ul { padding-left: 20px; line-height: 1.6; font-size: 1.1rem; }
+        button.btn-close { background-color: #333; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; display: block; margin: 20px auto 0; font-family: 'Roboto Condensed', sans-serif; width: 50%; }
+
         iframe { width: 100%; height: 300px; border-radius: 15px; margin-top: 20px; border: 5px solid white; }
     </style>
 </head>
@@ -23,38 +42,66 @@
         <h2 class="year-title">✧ 20 ✧</h2>
     </div>
 
+    <div class="counter-box">
+        Confirmados totales: <br> <span id="contador-texto">...</span>
+    </div>
+
     <div id="rsvp-form-container">
         <form id="rsvpForm">
-            <input type="text" id="nombre" placeholder="Nombre completo" required>
+            <input type="text" id="nombre" placeholder="Tu Nombre completo" required>
             <input type="tel" id="telefono" placeholder="Número de teléfono" required>
-            <input type="number" id="acompanantes" placeholder="¿Cuántos acompañantes?" min="0" required>
+            <input type="number" id="acompanantes" placeholder="¿Cuántos acompañantes extras?" min="0" required>
             <select id="asistencia" required>
                 <option value="" disabled selected>¿Asistirás?</option>
-                <option value="si">¡Sí!</option>
-                <option value="no">No 😔</option>
+                <option value="si">¡Sí! Ahí nos vemos 🥳</option>
+                <option value="no">No podré ir 😔</option>
             </select>
             <button type="submit" id="btnEnviar">Enviar Confirmación</button>
         </form>
     </div>
 
-    <iframe 
-        class="map-container"
-        src="https://maps.google.com/maps?q=20.381306,-99.967278&z=17&output=embed" 
-        width="100%" 
-        height="350" 
-        style="border:0;" 
-        allowfullscreen="" 
-        loading="lazy">
-    </iframe>
+    <div class="extra-buttons">
+        <button id="abrirReglas" class="btn-modal">Reglas de la Fiesta</button>
+        <button id="abrirSetlist" class="btn-modal btn-icon">?</button>
+    </div>
+
+    <iframe src="https://maps.google.com/maps?q=20.381306,-99.967278&z=17&output=embed" allowfullscreen="" loading="lazy"></iframe>
+
+    <dialog id="modalReglas">
+        <h3>Reglas del Evento</h3>
+        <ul>
+            <li><strong>Actitud al 100%:</strong> Venir listos para festejar los 20 con todo.</li>
+            <li><strong>Puntualidad:</strong> A partir de las 3:00 P.M. ¡No llegues cuando ya no haya comida!</li>
+            <li><strong>Respeto al lugar:</strong> Cuidar las instalaciones de la Hacienda San Nicolás.</li>
+            <li><strong>Cero excusas:</strong> Prohibido irse temprano.</li>
+        </ul>
+        <button class="btn-close" id="cerrarReglas">Entendido</button>
+    </dialog>
+
+    <dialog id="modalSetlist">
+        <h3>Setlist (Afinando garganta)</h3>
+        <ul>
+            <li>Tally</li>
+            <li>City Walls</li>
+            <li>Cottonwood</li>
+            <li>Rawfear</li>
+            <li>Intentions</li>
+            <li>The Line</li>
+            <li>One Way</li>
+            <li><em>...y un poco de Imagine Dragons para variar.</em></li>
+        </ul>
+        <button class="btn-close" id="cerrarSetlist">Cerrar</button>
+    </dialog>
+
     <script type="module">
-        // IMPORTANTE: Importamos desde 'firebase-database'
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        // AGREGAMOS 'onValue' para escuchar cambios en tiempo real
+        import { getDatabase, ref, push, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyC4uJlXvpXcv6mRhTVNjQgNhVrNJst8_QE",
             authDomain: "stringhinifest.firebaseapp.com",
-            databaseURL: "https://stringhinifest-default-rtdb.firebaseio.com", // Verifica esta URL en tu consola
+            databaseURL: "https://stringhinifest-default-rtdb.firebaseio.com",
             projectId: "stringhinifest",
             storageBucket: "stringhinifest.firebasestorage.app",
             messagingSenderId: "899568331837",
@@ -65,20 +112,37 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
+        // --- LÓGICA DEL CONTADOR ---
+        const listaAsistenciasRef = ref(db, 'asistencias');
+        const contadorTexto = document.getElementById('contador-texto');
+
+        onValue(listaAsistenciasRef, (snapshot) => {
+            let totalConfirmados = 0;
+            
+            snapshot.forEach((childSnapshot) => {
+                const data = childSnapshot.val();
+                // Solo sumamos si dijeron que SÍ van
+                if (data.asistencia === 'si') {
+                    // Sumamos 1 (el invitado principal) + la cantidad de acompañantes
+                    const acomp = parseInt(data.acompanantes) || 0;
+                    totalConfirmados += (1 + acomp);
+                }
+            });
+            
+            contadorTexto.innerText = totalConfirmados;
+        });
+
+        // --- LÓGICA DEL FORMULARIO ---
         const form = document.getElementById('rsvpForm');
         const btn = document.getElementById('btnEnviar');
 
         form.addEventListener('submit', async (event) => {
             event.preventDefault();
-            
             btn.disabled = true;
             btn.innerText = "Guardando...";
 
             try {
-                // Creamos una nueva referencia en la lista 'asistencias'
-                const listaAsistenciasRef = ref(db, 'asistencias');
                 const nuevaAsistenciaRef = push(listaAsistenciasRef);
-                
                 await set(nuevaAsistenciaRef, {
                     nombre: document.getElementById('nombre').value,
                     telefono: document.getElementById('telefono').value,
@@ -97,6 +161,16 @@
                 btn.innerText = "Enviar Confirmación";
             }
         });
+
+        // --- LÓGICA DE LOS MODALES (CUADROS DE DIÁLOGO) ---
+        const modalReglas = document.getElementById('modalReglas');
+        const modalSetlist = document.getElementById('modalSetlist');
+
+        document.getElementById('abrirReglas').addEventListener('click', () => modalReglas.showModal());
+        document.getElementById('cerrarReglas').addEventListener('click', () => modalReglas.close());
+
+        document.getElementById('abrirSetlist').addEventListener('click', () => modalSetlist.showModal());
+        document.getElementById('cerrarSetlist').addEventListener('click', () => modalSetlist.close());
     </script>
 </body>
 </html>
